@@ -54,6 +54,7 @@ internal object Flight : Module(
                 FlightMode.NCPSLIME -> {
                     player.capabilities.isFlying = true
                     player.capabilities.flySpeed = 0.3;
+                    player.onGround = true;
 
                     player.motionX = 0.0
                     player.motionY = 0.0
@@ -112,17 +113,6 @@ internal object Flight : Module(
 
         listener<PacketEvent.Receive> {
             if (mode == FlightMode.PACKET && it.packet is SPacketCloseWindow) it.cancel()
-        }
-        listener<PacketEvent.Send> {
-            if(it.packet is CPacketPlayer) {
-                packets++;
-                if(packets >= 20) {
-                    player.onGround = true
-                }
-            }
-            if(it.packet is CPacketPlayerAbilities) {
-                it.packet.setFlying(false);
-            }
         }
     }
 }
