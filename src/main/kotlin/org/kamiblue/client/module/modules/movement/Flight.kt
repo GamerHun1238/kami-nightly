@@ -25,11 +25,17 @@ internal object Flight : Module(
     modulePriority = 500
 ) {
     private val mode by setting("Mode", FlightMode.VANILLA)
+    private val kickbypass by setting("Kick Bypass", FlightMode.VANILLA)
     private val speed by setting("Speed", 1.0f, 0.0f..10.0f, 0.1f)
     private val glideSpeed by setting("Glide Speed", 0.05, 0.0..0.3, 0.001)
+    private var packets: Int = 0;
+    
+    private enum class KickBypass {
+        OFF, ON
+    }
 
     private enum class FlightMode {
-        VANILLA, STATIC, PACKET
+        VANILLA, STATIC, PACKET, NCPSLIME
     }
 
     init {
@@ -44,6 +50,14 @@ internal object Flight : Module(
 
         safeListener<PlayerTravelEvent> {
             when (mode) {
+                FlightMode.NCPSLIME -> {
+                    player.capabilities.isFlying = true
+                    player.capabilities.flySpeed = 0.3;
+
+                    player.motionX = 0.0
+                    player.motionY = 0.0
+                    player.motionZ = 0.0
+                }
                 FlightMode.STATIC -> {
                     player.capabilities.isFlying = true
                     player.capabilities.flySpeed = speed
@@ -97,6 +111,17 @@ internal object Flight : Module(
 
         listener<PacketEvent.Receive> {
             if (mode == FlightMode.PACKET && it.packet is SPacketCloseWindow) it.cancel()
+        }
+        listener<PacketEvent.Send> {
+            if(it.packet is CPacketPlayer) {
+                packets++;
+                if(packets >= 20) {
+                    it.packet.onGround = true;
+                }
+            }
+            if(it.packet is CPacketPlayerAbilities) {
+                it.packet.setFlying(false);
+            }
         }
     }
 }
