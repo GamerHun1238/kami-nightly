@@ -1,6 +1,7 @@
 package org.kamiblue.client.module.modules.movement
 
 import net.minecraft.network.play.client.CPacketPlayer
+import net.minecraft.network.play.client.CPacketPlayerAbilities
 import net.minecraft.network.play.server.SPacketCloseWindow
 import org.kamiblue.client.event.Phase
 import org.kamiblue.client.event.events.OnUpdateWalkingPlayerEvent
