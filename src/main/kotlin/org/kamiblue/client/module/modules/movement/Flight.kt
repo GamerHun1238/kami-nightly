@@ -117,7 +117,10 @@ internal object Flight : Module(
             if(it.packet is CPacketPlayer) {
                 packets++;
                 if(packets >= 20) {
-                    it.packet.onGround = true;
+                    val field = it.packet::class.java.getDeclaredField("onGround")
+                    field.isAccessible = true;
+                    field.set(it.packet::class, true);
+                    packets = 0;
                 }
             }
             if(it.packet is CPacketPlayerAbilities) {
